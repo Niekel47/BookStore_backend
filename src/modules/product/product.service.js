@@ -6,7 +6,7 @@ const Product_Category = require("../../models/product_category.js");
 const db = require("../../models/index");
 
 class ProductService {
-  static async createproduct(productData, CategoryIds) {
+  static async createproduct(productData) {
     try {
       const {
         AuthorId,
@@ -17,13 +17,8 @@ class ProductService {
         quantity,
         description,
         status,
-        CategoryId,
+        CategoryId, // Thay đổi tên biến này từ CategoryId sang CategoryIds
       } = productData;
-
-      // Kiểm tra xem CategoryId có phải là mảng không
-      // const categoryIdArray = Array.isArray(CategoryId)
-      //   ? CategoryId
-      //   : [CategoryId];
 
       // Kiểm tra xem sản phẩm đã tồn tại chưa
       const checkProduct = await db.Product.findOne({
@@ -50,11 +45,12 @@ class ProductService {
       });
 
       // Tạo các bản ghi trong bảng trung gian Product_Category
-
-      await db.Product_Category.create({
-        ProductId: newProduct.id,
-        CategoryId: CategoryId,
-      });
+      
+          await db.Product_Category.create({
+            ProductId: newProduct.id,
+            CategoryId: CategoryId,
+          });
+       
 
       return {
         newProduct,

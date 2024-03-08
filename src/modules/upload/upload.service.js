@@ -1,15 +1,15 @@
 const multer = require("multer");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/images");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "public/images");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.originalname);
+//   },
+// });
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
 const uploadImage = async (req, res) => {
   try {
@@ -21,4 +21,4 @@ const uploadImage = async (req, res) => {
   }
 };
 
-module.exports = { upload, uploadImage };
+module.exports = {  uploadImage };

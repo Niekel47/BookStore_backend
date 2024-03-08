@@ -1,7 +1,6 @@
-const { uploadImage } = require("./upload.service.js"); ;
+const { uploadImage } = require("./upload.service.js");
 
-
- const uploadImageController = async (req, res) => {
+const uploadImageController = async (req, res) => {
   try {
     await uploadImage(req, res);
   } catch (error) {

@@ -13,7 +13,7 @@ class ProductController {
         status,
         AuthorId,
         PublisherId,
-        CategoryId,
+        CategoryId, // Thay đổi tên biến này từ CategoryId sang CategoryIds
       } = req.body;
 
       if (
@@ -35,8 +35,6 @@ class ProductController {
 
       const imagePath = "public/images/" + image;
 
-      // Xử lý CategoryId nếu là một giá trị duy nhất hoặc một mảng
-
       const response = await ProductService.createproduct({
         name,
         image: imagePath,
@@ -46,7 +44,7 @@ class ProductController {
         status,
         AuthorId,
         PublisherId,
-        CategoryId, // Chuyển sang sử dụng mảng categoryIdArray
+        CategoryId, // Sửa thành CategoryIds
       });
 
       return res.status(200).json(response);
