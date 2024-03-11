@@ -18,6 +18,9 @@ module.exports = (sequelize, DataTypes) => {
       Product.belongsToMany(models.Category, {
         through: "Product_Category",
       });
+      // Product.belongsTo(models.Product_Category, {
+      //   foreignKey: "ProductId",
+      // });
     }
   }
   Product.init(
@@ -30,7 +33,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       AuthorId: DataTypes.UUID,
       PublisherId: DataTypes.UUID,
-      CategoryId: DataTypes.UUID,
       name: DataTypes.TEXT,
       image: DataTypes.TEXT,
       price: DataTypes.FLOAT,

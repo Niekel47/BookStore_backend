@@ -9,15 +9,15 @@ class ProductService {
   static async createproduct(productData) {
     try {
       const {
-        AuthorId,
-        PublisherId,
         name,
         price,
         image,
         quantity,
         description,
         status,
-        CategoryId, // Thay đổi tên biến này từ CategoryId sang CategoryIds
+        CategoryIds,
+        AuthorId, // Thêm AuthorIds để nhận mảng các AuthorId
+        PublisherId, // Thêm PublisherIds để nhận mảng các PublisherId
       } = productData;
 
       // Kiểm tra xem sản phẩm đã tồn tại chưa
@@ -33,24 +33,27 @@ class ProductService {
 
       // Tạo sản phẩm mới
       const newProduct = await db.Product.create({
-        AuthorId: AuthorId,
-        PublisherId: PublisherId,
-        CategoryId: CategoryId,
-        name: name,
-        image: image,
-        price: price,
-        quantity: quantity,
-        description: description,
-        status: status,
+        name,
+        image,
+        price,
+        quantity,
+        description,
+        status,
+        AuthorId,
+        PublisherId,
       });
 
       // Tạo các bản ghi trong bảng trung gian Product_Category
-      
-          await db.Product_Category.create({
-            ProductId: newProduct.id,
-            CategoryId: CategoryId,
-          });
-       
+      if (CategoryIds && CategoryIds.length > 0) {
+        await Promise.all(
+          CategoryIds.map(async (CategoryId) => {
+            await db.Product_Category.create({
+              ProductId: newProduct.id,
+              CategoryId: CategoryId,
+            });
+          })
+        );
+      }
 
       return {
         newProduct,
@@ -115,22 +118,53 @@ class ProductService {
     }
   }
 
-  static async updateproduct(id, data) {
+  static async updateProduct(id, data) {
     try {
       const checkProduct = await db.Product.findByPk(id);
-      if (checkProduct == null) {
+      if (!checkProduct) {
         return {
           status: "ERR",
           message: "Sản phẩm không tồn tại",
         };
       }
-      const updatedProduct = await db.Product.update(data, {
+
+      // Lưu ID của sản phẩm trước khi cập nhật
+      const productId = checkProduct.id;
+
+      // Kiểm tra xem liệu có CategoryIds trong data không
+      if ("CategoryIds" in data) {
+        const { CategoryIds } = data;
+        if (Array.isArray(CategoryIds)) {
+          // Xóa tất cả các bản ghi liên quan đến sản phẩm trong bảng trung gian Product_Category
+          await db.Product_Category.destroy({
+            where: {
+              ProductId: productId,
+            },
+          });
+
+          // Thêm mới các bản ghi trong bảng trung gian Product_Category với các CategoryId mới
+          await Promise.all(
+            CategoryIds.map(async (CategoryId) => {
+              await db.Product_Category.create({
+                ProductId: productId,
+                CategoryId: CategoryId,
+              });
+            })
+          );
+        }
+        // Xóa trường CategoryIds ra khỏi dữ liệu cập nhật sản phẩm
+        delete data["CategoryIds"];
+      }
+
+      // Cập nhật thông tin sản phẩm với ID đã xác định
+      await db.Product.update(data, {
         where: { id: id },
       });
+
       return {
         status: "OK",
-        message: "thanh cong",
-        data: updatedProduct,
+        message: "Thành công",
+        
       };
     } catch (error) {
       console.error(error);
@@ -138,18 +172,22 @@ class ProductService {
     }
   }
 
-  static async deleteproduct(id, req, res) {
+  static async deleteproduct(id) {
     try {
       const existingProduct = await db.Product.findByPk(id);
       if (!existingProduct) {
-        return res.status(404).json({
-          error: "Sản phẩm không tồn tại.",
-        });
+        return { status: 404, message: "Sản phẩm không tồn tại." };
       }
-      const destroy = await db.Product.destroy({ where: { id } });
-      return destroy;
+
+      // Xóa sản phẩm từ bảng Product
+      await db.Product.destroy({ where: { id } });
+
+      // Xóa tất cả các bản ghi liên quan đến sản phẩm trong bảng trung gian Product_Category
+      await db.Product_Category.destroy({ where: { ProductId: id } });
+
+      return { status: 200, message: "Sản phẩm đã được xóa thành công." };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
@@ -157,7 +195,17 @@ class ProductService {
   static async getproductById(id, req, res) {
     try {
       // Tìm người dùng trong cơ sở dữ liệu với id được cung cấp
-      const product = await db.Product.findByPk(id);
+      const product = await db.Product.findByPk(id, {
+        include: [
+          { model: db.Author, attributes: ["name"] },
+          { model: db.Publisher, attributes: ["name"] },
+          {
+            model: db.Category,
+            attributes: ["name"],
+            through: { attributes: [] }, // Bỏ qua bảng trung gian
+          },
+        ],
+      });
       return product;
     } catch (error) {
       console.error(error);
@@ -167,10 +215,15 @@ class ProductService {
 
   static async deleteManyProduct(ids) {
     try {
-      const destroy = await db.Product.destroy({ where: { id: ids } });
-      return destroy;
+      // Xóa các sản phẩm từ bảng Product
+      await db.Product.destroy({ where: { id: ids } });
+
+      // Xóa tất cả các bản ghi liên quan đến các sản phẩm trong bảng trung gian Product_Category
+      await db.Product_Category.destroy({ where: { ProductId: ids } });
+
+      return { status: 200, message: "Các sản phẩm đã được xóa thành công." };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }

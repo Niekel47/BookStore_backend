@@ -13,7 +13,7 @@ class ProductController {
         status,
         AuthorId,
         PublisherId,
-        CategoryId, // Thay đổi tên biến này từ CategoryId sang CategoryIds
+        CategoryIds, // Thay đổi tên biến này từ CategoryId sang CategoryIds
       } = req.body;
 
       if (
@@ -25,7 +25,7 @@ class ProductController {
         !quantity ||
         !AuthorId ||
         !PublisherId ||
-        !CategoryId
+        !CategoryIds
       ) {
         return res.status(400).json({
           status: "ERR",
@@ -44,7 +44,7 @@ class ProductController {
         status,
         AuthorId,
         PublisherId,
-        CategoryId, // Sửa thành CategoryIds
+        CategoryIds, // Sửa thành CategoryIds
       });
 
       return res.status(200).json(response);
@@ -68,19 +68,17 @@ class ProductController {
 
   static async updateProduct(req, res) {
     try {
-      const productId = req.params.id;
+      const { id } = req.params;
       const data = req.body;
-      if (!productId) {
-        return res.status(200).json({
-          status: "ERR",
-          message: "Cần id của sản phẩm",
-        });
-      }
-      const response = await ProductService.updateproduct(productId, data);
+
+      const response = await ProductService.updateProduct(id, data);
+
       return res.status(200).json(response);
-    } catch (e) {
-      return res.status(404).json({
-        message: e,
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "ERR",
+        message: "Đã xảy ra lỗi trong quá trình xử lý",
       });
     }
   }
@@ -119,10 +117,10 @@ class ProductController {
         });
       }
 
-      const destroyCount = await ProductService.deleteManyProduct(ids);
+      await ProductService.deleteManyProduct(ids);
 
       res.status(200).json({
-        message: `${destroyCount} sản phẩm đã được xóa thành công.`,
+        message: ` thành công.`,
       });
     } catch (error) {
       console.log(error);

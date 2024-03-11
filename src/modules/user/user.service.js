@@ -49,7 +49,7 @@ class UserService {
 
   static async updateUser(id, req, res) {
     try {
-      const { fullname, email, password, phone } = req.body;
+      const { fullname, email, password, phone, address } = req.body;
       const existingUser = await db.User.findByPk(id);
       if (!existingUser) {
         return res.status(404).json({
@@ -84,6 +84,7 @@ class UserService {
             fullname,
             password: hashedPassword, // Sử dụng mật khẩu mới đã được hash
             phone,
+            address,
           },
           { where: { id } }
         );
@@ -95,6 +96,7 @@ class UserService {
           {
             fullname,
             phone,
+            address,
           },
           { where: { id } }
         );

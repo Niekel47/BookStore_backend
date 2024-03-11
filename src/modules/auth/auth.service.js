@@ -18,7 +18,7 @@ const db = require("../../models/index");
         };
       }
       const hashedPassword = await bcrypt.hash(password, 10);
-      const post = await User.create({
+      const post = await db.User.create({
         fullname: fullname,
         email: email,
         password: hashedPassword,
