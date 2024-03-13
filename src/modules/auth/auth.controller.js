@@ -1,10 +1,13 @@
-const AuthService = require("./auth.service.js"); ;
+const AuthService = require("./auth.service.js");
 
- class AuthController {
+class AuthController {
   static createUser = async (req, res) => {
     try {
-      const { fullname, email, password, phone, isAdmin } = req.body;
+      const { fullname, email, password, phone, address, role, status } =
+        req.body;
+
       const user = await AuthService.createuser(req.body);
+      console.log("data", user);
       return res.status(200).json(user);
     } catch (error) {
       console.error(error);
@@ -16,7 +19,6 @@ const AuthService = require("./auth.service.js"); ;
     try {
       const login = await AuthService.loginuser(req.body);
       return res.status(200).json(login);
-      
     } catch (error) {
       console.error(error);
       throw error;

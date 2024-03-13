@@ -2,6 +2,9 @@ const express = require("express");
 const sequelize = require("./src/config/db.js");
 const { config } = require("dotenv");
 const routes = require("./src/routes/index.js");
+const cors = require("cors");
+// const configCors = require("./src/middleware/configcors.middleware.js")
+
 
 const {
   errorHandler,
@@ -12,6 +15,8 @@ const path = require("path");
 
 config();
 const app = express();
+// configCors(app)
+app.use(cors());
 app.use(express.json());
 app.use(responseSuccess);
 app.use(express.urlencoded({ extended: true }));
@@ -24,7 +29,6 @@ app.get("/", (req, res) => {
 
 const startServer = async () => {
   try {
-    // await db.sequelize.sync({alter: process.env.DB_ALTER !== 'false'});
     await sequelize.authenticate();
     console.log("✅ Database connected!");
     await sequelize.sync({ alter: process.env.DB_ALTER !== "false" });

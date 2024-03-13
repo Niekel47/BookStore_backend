@@ -164,7 +164,6 @@ class ProductService {
       return {
         status: "OK",
         message: "Thành công",
-        
       };
     } catch (error) {
       console.error(error);

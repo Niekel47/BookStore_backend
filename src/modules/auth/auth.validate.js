@@ -1,7 +1,7 @@
 const { body } = require("express-validator");
 
 const AuthRegisterInput = [
-  body("fullname").notEmpty().withMessage("First name is required"),
+  body("fullname").notEmpty().withMessage("Full name is required"),
   body("email")
     .trim()
     .notEmpty()
@@ -22,7 +22,7 @@ const AuthRegisterInput = [
     .withMessage("Phone number must be between 10 and 11 digits"),
 ];
 
- const AuthLoginInput = [
+const AuthLoginInput = [
   body("email")
     .trim()
     .notEmpty()
@@ -32,7 +32,7 @@ const AuthRegisterInput = [
   body("password").notEmpty().withMessage("Password is required"),
 ];
 
- const AuthChangePassInput = [
+const AuthChangePassInput = [
   body("password").notEmpty().withMessage("Password is required"),
   body("new_password")
     .notEmpty()
@@ -41,4 +41,4 @@ const AuthRegisterInput = [
     .withMessage("Password must be at least 6 characters long"),
 ];
 
-module.exports = {AuthRegisterInput,AuthLoginInput,AuthChangePassInput}
+module.exports = { AuthRegisterInput, AuthLoginInput, AuthChangePassInput };
