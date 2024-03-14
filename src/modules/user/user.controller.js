@@ -2,6 +2,17 @@ const UserService = require("./user.service.js");
 const { ListQueryReq } = require("../../function/req.query.js");
 
 class UserController {
+  static Register = async (req, res) => {
+    try {
+      const register_user = await UserService.registerUser(req.body);
+      console.log("data", register_user);
+      return res.status(200).json(register_user);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   static async getAllUsers(req, res) {
     try {
       const allUsers = await UserService.getAllUsers(req, res);

@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 app.use(responseSuccess);
 app.use(express.urlencoded({ extended: true }));
-app.use("/static", express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 app.use("/api", routes);
 app.use(errorHandler);
 app.get("/", (req, res) => {

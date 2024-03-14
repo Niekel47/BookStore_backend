@@ -4,9 +4,6 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("Users", {
       id: {
-        type: Sequelize.INTEGER,
-      },
-      id: {
         type: Sequelize.UUID,
         allowNull: false,
         primaryKey: true,
@@ -24,13 +21,15 @@ module.exports = {
         type: Sequelize.STRING,
       },
       role: {
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM("admin", "user"),
+        defaultValue: "user",
       },
       phone: {
         type: Sequelize.STRING,
       },
       status: {
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM("active", "inactive"),
+        defaultValue: "active",
       },
       createdAt: {
         allowNull: false,

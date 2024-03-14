@@ -2,6 +2,40 @@ const bcrypt = require("bcrypt");
 const db = require("../../models/index");
 
 class UserService {
+  static registerUser = async (newuser) => {
+    try {
+      const { fullname, email, password, phone, address } =
+        newuser;
+
+      // Kiểm tra xem email đã tồn tại trong cơ sở dữ liệu chưa
+      const existingUser = await db.User.findOne({ where: { email: email } });
+      if (existingUser) {
+        return {
+          status: "Err",
+          message: "Email đã tồn tại!",
+        };
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await db.User.create({
+        fullname: fullname,
+        email: email,
+        password: hashedPassword,
+        phone: phone,
+        address: address,
+      });
+
+      return {
+        status: 200,
+        message: "Thành công",
+        data: user,
+      };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   static async getAllUsers(req, res) {
     try {
       const { page, limit = 3, sort, search } = req.query;

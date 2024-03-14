@@ -1,8 +1,3 @@
-const Product = require("../../models/product.js");
-const Author = require("../../models/author.js");
-const Publisher = require("../../models/publisher.js");
-const Category = require("../../models/category.js");
-const Product_Category = require("../../models/product_category.js");
 const db = require("../../models/index");
 
 class ProductService {
@@ -16,8 +11,8 @@ class ProductService {
         description,
         status,
         CategoryIds,
-        AuthorId, // Thêm AuthorIds để nhận mảng các AuthorId
-        PublisherId, // Thêm PublisherIds để nhận mảng các PublisherId
+        AuthorId,
+        PublisherId,
       } = productData;
 
       // Kiểm tra xem sản phẩm đã tồn tại chưa
@@ -45,14 +40,12 @@ class ProductService {
 
       // Tạo các bản ghi trong bảng trung gian Product_Category
       if (CategoryIds && CategoryIds.length > 0) {
-        await Promise.all(
-          CategoryIds.map(async (CategoryId) => {
-            await db.Product_Category.create({
-              ProductId: newProduct.id,
-              CategoryId: CategoryId,
-            });
-          })
-        );
+        CategoryIds.map(async (CategoryId) => {
+          await db.Product_Category.create({
+            ProductId: newProduct.id,
+            CategoryId: CategoryId,
+          });
+        });
       }
 
       return {

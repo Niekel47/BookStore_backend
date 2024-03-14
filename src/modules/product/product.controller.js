@@ -1,5 +1,5 @@
 const ProductService = require("./product.service.js");
-const Author = require("../../models/author.js");
+
 
 class ProductController {
   static async createProduct(req, res) {
@@ -33,7 +33,7 @@ class ProductController {
         });
       }
 
-      const imagePath = "public/images/" + image;
+      const imagePath = "/images/" + image;
 
       const response = await ProductService.createproduct({
         name,
