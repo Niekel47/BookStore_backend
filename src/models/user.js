@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.hasMany(models.Order);
+      User.belongsTo(models.Role);
+      User.hasMany(models.Rate);
     }
   }
   User.init(
@@ -23,15 +26,9 @@ module.exports = (sequelize, DataTypes) => {
       email: DataTypes.TEXT,
       password: DataTypes.TEXT,
       address: DataTypes.STRING,
-      role: {
-        type: DataTypes.ENUM("admin", "user"), 
-        defaultValue: "user", 
-      },
+      RoleId: DataTypes.INTEGER,
       phone: DataTypes.STRING,
-      status: {
-        type: DataTypes.ENUM("active", "inactive"), 
-        defaultValue: "active", 
-      },
+      status: DataTypes.INTEGER,
     },
     {
       sequelize,

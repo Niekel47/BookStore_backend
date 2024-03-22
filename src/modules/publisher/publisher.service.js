@@ -58,11 +58,11 @@ class PublisherService {
       const totalCat = await db.Publisher.count(options.where);
       const totalPages = Math.ceil(totalCat / limit);
       // Thực hiện truy vấn để lấy danh sách người dùng với các tùy chọn đã được đặt
-      const getallcat = await db.Publisher.findAll(options);
+      const getPublisher = await db.Publisher.findAll(options);
       return {
         totalCat,
         totalPages,
-        getallcat,
+        getPublisher,
       };
     } catch (error) {
       console.log(error);

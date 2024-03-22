@@ -21,12 +21,13 @@ router.post(
   validationHandler(AuthRegisterInput),
   AuthController.createUser
 );
-router.get("/profile/:id", AuthController.profile);
-router.put("/profile/:id", AuthController.updateprofile);
+router.get("/profile", AuthController.profile);
+router.put("/profile", AuthController.updateprofile);
 router.post(
-  "/profile/password/:id",
+  "/profile/changepassword",
   validationHandler(AuthChangePassInput),
   AuthController.updatePassword
 );
+router.get("/authentication", AuthController.handleAuth);
 
 module.exports = router;

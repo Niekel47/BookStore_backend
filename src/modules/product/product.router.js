@@ -6,8 +6,8 @@ const upload = require("../../middleware/upload.middleware.js");
 // Product
 router.get("/", ProductController.getAllProducts);
 router.get("/:id", ProductController.getProductById);
-router.post("/", upload.single("file"), ProductController.createProduct);
-router.put("/:id", upload.single("file"), ProductController.updateProduct);
+router.post("/", upload.single("image"), ProductController.createProduct);
+router.put("/:id", upload.single("image"), ProductController.updateProduct);
 router.delete("/:id", ProductController.deleteProduct);
 router.post("/delete-many", ProductController.deleteManyProduct);
 

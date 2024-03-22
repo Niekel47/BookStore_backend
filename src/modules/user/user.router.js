@@ -11,7 +11,6 @@ router.put("/:id", UserController.updateUser);
 router.delete("/:id", UserController.deleteUser);
 router.post("/delete-many", UserController.deleteManyUsers);
 router.post("/register", UserController.Register);
-
 // router.delete("/", deleteUsers);
 
 module.exports = router;

@@ -8,6 +8,8 @@ const categoryRouter = require("../modules/category/category.router.js");
 const authorRouter = require("../modules/author/author.router.js");
 const publisherRouter = require("../modules/publisher/publisher.router.js");
 const uploadRouter = require("../modules/upload/upload.router.js");
+const RateRouter = require("../modules/rate/rate.router.js");
+const OrderRouter = require("../modules/order/order.router.js");
 
 const routes = Router();
 routes.use("/auth", authRouter);
@@ -17,5 +19,7 @@ routes.use("/category", categoryRouter);
 routes.use("/author", authorRouter);
 routes.use("/publisher", publisherRouter);
 routes.use("/upload", uploadRouter);
+routes.use("/rate", RateRouter);
+routes.use("/order", OrderRouter);
 
 module.exports = routes;

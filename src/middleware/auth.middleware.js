@@ -8,7 +8,7 @@ exports.genneralAccessToken = async (payload) => {
     {
       payload,
     },
-    process.env.ACCESS_TOKEN,
+    process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_ACCESS_TOKEN_expiresIn }
   );
   return access_token;
@@ -25,33 +25,45 @@ exports.genneralRefreshToken = async (payload) => {
   return refresh_token;
 };
 
-exports.checkPermission = async (req, res, next) => {
+exports.createJWT = (payload) => {
+  let token = null;
+  let key = process.env.JWT_SECRET;
   try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      return res.status(403).json({
-        message: "Ban chua dang nhap!",
-      });
-    }
-    const decoded = jwt.verify(
-      token,
-      process.env.ACCESS_TOKEN,
-      process.env.REFRESH_TOKEN
-    );
-    const user = await User.findbyID(decoded._id);
-    if (!user) {
-      return res.status(403).json({
-        message: "Token loi!",
-      });
-    }
-    if (user.role !== "admin") {
-      return res.status(403).json({
-        message: "Ban khong phai admin!",
-      });
-    }
-    next();
+    token = jwt.sign(payload, key);
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.log(error);
   }
+  return token;
+};
+
+exports.verifyToken = (token) => {
+  let decoded = null;
+  let key = process.env.JWT_SECRET;
+  let data = null;
+  try {
+    decoded = jwt.verify(token, key);
+    data = decoded;
+  } catch (error) {
+    console.log(error);
+  }
+  return data;
+};
+
+exports.authenticateToken = (req, res, next) => {
+  // Lấy token từ header 'Authorization'
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (token == null) {
+    return res.sendStatus(401); // Nếu không có token, trả về lỗi 401 (Unauthorized)
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.sendStatus(403); // Nếu token không hợp lệ, trả về lỗi 403 (Forbidden)
+    }
+
+    req.user = user; // Lưu thông tin người dùng vào request object
+    next(); // Tiếp tục xử lý yêu cầu
+  });
 };

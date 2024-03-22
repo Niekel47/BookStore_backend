@@ -9,7 +9,6 @@ class ProductService {
         image,
         quantity,
         description,
-        status,
         CategoryIds,
         AuthorId,
         PublisherId,
@@ -33,7 +32,7 @@ class ProductService {
         price,
         quantity,
         description,
-        status,
+        status: 2,
         AuthorId,
         PublisherId,
       });
@@ -59,7 +58,7 @@ class ProductService {
 
   static async getAllproducts(req, res) {
     try {
-      const { page, limit = 5, sort, search } = req.query;
+      const { page = 1, limit = 5, sort, search } = req.query;
       // Tùy chỉnh truy vấn dựa trên các tham số được truyền vào từ client
       const options = {
         order: [],

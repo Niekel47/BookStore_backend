@@ -4,8 +4,7 @@ const db = require("../../models/index");
 class UserService {
   static registerUser = async (newuser) => {
     try {
-      const { fullname, email, password, phone, address } =
-        newuser;
+      const { fullname, email, password, phone, address } = newuser;
 
       // Kiểm tra xem email đã tồn tại trong cơ sở dữ liệu chưa
       const existingUser = await db.User.findOne({ where: { email: email } });
@@ -23,6 +22,8 @@ class UserService {
         password: hashedPassword,
         phone: phone,
         address: address,
+        RoleId: 2,
+        status: 2,
       });
 
       return {
@@ -161,6 +162,12 @@ class UserService {
 
   static async deleteManyUsers(ids) {
     try {
+      const existingUser = await db.User.findByPk(id);
+      if (!existingUser) {
+        return res.status(404).json({
+          error: "Người dùng không tồn tại.",
+        });
+      }
       const destroy = await db.User.destroy({ where: { id: ids } });
       return destroy;
     } catch (error) {

@@ -1,6 +1,5 @@
 const ProductService = require("./product.service.js");
 
-
 class ProductController {
   static async createProduct(req, res) {
     try {
@@ -10,7 +9,6 @@ class ProductController {
         price,
         quantity,
         description,
-        status,
         AuthorId,
         PublisherId,
         CategoryIds, // Thay đổi tên biến này từ CategoryId sang CategoryIds
@@ -21,7 +19,6 @@ class ProductController {
         !image ||
         !price ||
         !description ||
-        !status ||
         !quantity ||
         !AuthorId ||
         !PublisherId ||
@@ -35,19 +32,19 @@ class ProductController {
 
       const imagePath = "/images/" + image;
 
-      const response = await ProductService.createproduct({
+      const newProduct = await ProductService.createproduct({
         name,
         image: imagePath,
         price,
         quantity,
         description,
-        status,
+        status: 2,
         AuthorId,
         PublisherId,
         CategoryIds, // Sửa thành CategoryIds
       });
 
-      return res.status(200).json(response);
+      return res.status(200).json(newProduct);
     } catch (e) {
       return res.status(500).json({
         status: "ERR",
