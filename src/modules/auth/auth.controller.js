@@ -72,10 +72,10 @@ class AuthController {
       const { old_password, new_password } = req.body;
 
       // Gọi service để thực hiện cập nhật mật khẩu
-
-      const updatedUser = await AuthService.updatePassword(id, 
+      const updatedUser = await AuthService.updatePassword(
+        id,
         old_password,
-        new_password,
+        new_password
       );
 
       return res.status(200).json({
@@ -88,20 +88,6 @@ class AuthController {
     }
   }
 
-  // static changePassword = async (req, res, next) => {
-  //   try {
-  //     // Get user id & data update
-  //     const id = req.user ? req.user.id : "";
-  //     const { password, new_password } = req.body;
-  //     // Update profile
-  //     await AuthService.changepassword(id, { password, new_password });
-  //     return res
-  //       .status(200)
-  //       .json({ message: "Password is changed successfully" });
-  //   } catch (e) {
-  //     return next(e);
-  //   }
-  // };
 }
 
 module.exports = AuthController;

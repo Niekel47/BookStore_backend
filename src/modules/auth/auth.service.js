@@ -83,85 +83,6 @@ class AuthService {
     }
   };
 
-  static handleAuth = async (req, res) => {
-    try {
-      if (req.headers.Authorization) {
-        let token = req.headers.Authorization;
-        let data_token = verifyToken(token);
-        let user = await db.User.findOne({
-          where: {
-            id: data_token.id,
-            username: data_token.username,
-            email: data_token.email,
-          },
-        });
-        if (user) {
-          let dataUser = {
-            id: user.id,
-            name: user.name,
-            username: user.username,
-            email: user.email,
-          };
-          return res.status(200).json({
-            success: true,
-            message: "Xác thực đăng nhập thành công !",
-            user: dataUser,
-          });
-        } else {
-          return res.status(200).json({
-            detail: "Vui lòng hãy đăng nhập !",
-          });
-        }
-      } else {
-        return res.status(200).json({
-          detail: "Vui lòng hãy đăng nhập !",
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // static handleAuthToken = async (req, res) => {
-  //   try {
-  //     // console.log("token:", req.params.token);
-  //     if (req.params.token) {
-  //       let token = req.params.token;
-  //       let data_token = verifyToken(token);
-  //       let user = await db.User.findOne({
-  //         where: {
-  //           id: data_token.id,
-  //           username: data_token.username,
-  //           email: data_token.email,
-  //         },
-  //       });
-  //       if (user) {
-  //         let dataUser = {
-  //           id: user.id,
-  //           name: user.name,
-  //           username: user.username,
-  //           email: user.email,
-  //         };
-  //         return res.status(200).json({
-  //           success: true,
-  //           message: "Xác thực đăng nhập thành công !",
-  //           user: dataUser,
-  //         });
-  //       } else {
-  //         return res.status(200).json({
-  //           detail: "Vui lòng hãy đăng nhập !",
-  //         });
-  //       }
-  //     } else {
-  //       return res.status(200).json({
-  //         detail: "Vui lòng hãy đăng nhập !",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   static async profile(id) {
     try {
       // Tìm người dùng trong cơ sở dữ liệu với id được cung cấp
@@ -209,6 +130,8 @@ class AuthService {
         user.password
       );
       if (!isValidOldPassword) {
+        console.log("oldpass", old_password)
+          console.log("user pass", user.password);
         throw new Error("Mật khẩu cũ không đúng");
       }
       if (old_password === new_password) {
@@ -216,62 +139,13 @@ class AuthService {
       }
       const hashedPassword = await bcrypt.hash(new_password, 10);
       await user.update({ password: hashedPassword });
-      return user;
+      return user; // Trả về user sau khi cập nhật mật khẩu
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
 
-  static verifyToken = (token) => {
-    let decoded = null;
-    let key = process.env.JWT_SECRET;
-    let data = null;
-    try {
-      decoded = jwt.verify(token, key);
-      data = decoded;
-    } catch (error) {
-      console.log(error);
-    }
-    return data;
-  };
-  static handleAuthToken = async (req, res) => {
-    try {
-      if (req.params.token) {
-        let token = req.params.token;
-        let data_token = verifyToken(token);
-        let user = await db.User.findOne({
-          where: {
-            id: data_token.id,
-            RoleId: data_token.role_id,
-          },
-        });
-        if (user) {
-          let dataUser = {
-            id: user.id,
-            name: user.name,
-            username: user.username,
-            email: user.email,
-          };
-          return res.status(200).json({
-            success: true,
-            message: "Xác thực đăng nhập thành công !",
-            user: dataUser,
-          });
-        } else {
-          return res.status(200).json({
-            detail: "Vui lòng hãy đăng nhập !",
-          });
-        }
-      } else {
-        return res.status(200).json({
-          detail: "Vui lòng hãy đăng nhập !",
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 }
 
 module.exports = AuthService;
