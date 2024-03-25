@@ -130,8 +130,6 @@ class AuthService {
         user.password
       );
       if (!isValidOldPassword) {
-        console.log("oldpass", old_password)
-          console.log("user pass", user.password);
         throw new Error("Mật khẩu cũ không đúng");
       }
       if (old_password === new_password) {
@@ -139,13 +137,12 @@ class AuthService {
       }
       const hashedPassword = await bcrypt.hash(new_password, 10);
       await user.update({ password: hashedPassword });
-      return user; // Trả về user sau khi cập nhật mật khẩu
+      return user;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
-
 }
 
 module.exports = AuthService;

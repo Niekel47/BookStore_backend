@@ -25,7 +25,7 @@ router.get("/profile", AuthController.profile);
 router.put("/profile", AuthController.updateprofile);
 router.post(
   "/profile/changepassword",
-  // validationHandler(AuthChangePassInput),
+  validationHandler(AuthChangePassInput),
   AuthController.updatePassword
 );
 router.get("/authentication", AuthController.handleAuth);

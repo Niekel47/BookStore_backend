@@ -72,6 +72,7 @@ class AuthController {
       const { old_password, new_password } = req.body;
 
       // Gọi service để thực hiện cập nhật mật khẩu
+
       const updatedUser = await AuthService.updatePassword(
         id,
         old_password,
@@ -87,7 +88,6 @@ class AuthController {
       return next(error);
     }
   }
-
 }
 
 module.exports = AuthController;
