@@ -27,7 +27,7 @@ class AuthorService {
 
   static async getAllAuthor(req, res) {
     try {
-      const { page, limit = 3, sort, search } = req.query;
+      const { page, limit = 5, sort, search } = req.query;
       // Tùy chỉnh truy vấn dựa trên các tham số được truyền vào từ client
       const options = {
         order: [],
@@ -56,12 +56,12 @@ class AuthorService {
         };
       }
       const totalAuthor = await db.Author.count(options.where);
-      const totalPages = Math.ceil(totalAuthor / limit);
+      const totalPagesAuthor = Math.ceil(totalAuthor / limit);
       // Thực hiện truy vấn để lấy danh sách người dùng với các tùy chọn đã được đặt
       const getallAuthor = await db.Author.findAll(options);
       return {
         totalAuthor,
-        totalPages,
+        totalPagesAuthor,
         getallAuthor,
       };
     } catch (error) {
@@ -112,7 +112,7 @@ class AuthorService {
 
   static async deleteManyAuthors(ids) {
     try {
-      const destroy = await Author.destroy({ where: { id: ids } });
+      const destroy = await db.Author.destroy({ where: { id: ids } });
       return destroy;
     } catch (error) {
       console.log(error);

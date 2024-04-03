@@ -13,7 +13,7 @@ class ProductService {
         AuthorId,
         PublisherId,
       } = productData;
-
+      console.log("Category", productData);
       // Kiểm tra xem sản phẩm đã tồn tại chưa
       const checkProduct = await db.Product.findOne({
         where: { name: name },
@@ -36,10 +36,13 @@ class ProductService {
         AuthorId,
         PublisherId,
       });
-
+      // const categoryIdsArray = [CategoryIds];
+      let CategoryIdsNew = CategoryIds.replace(/[\[\]']+/g, "");
+      const categoryIdsArray = CategoryIdsNew.split(",");
+      console.log("categoryIdsArray", categoryIdsArray);
       // Tạo các bản ghi trong bảng trung gian Product_Category
-      if (CategoryIds && CategoryIds.length > 0) {
-        CategoryIds.map(async (CategoryId) => {
+      if (categoryIdsArray && categoryIdsArray.length > 0) {
+        categoryIdsArray.map(async (CategoryId) => {
           await db.Product_Category.create({
             ProductId: newProduct.id,
             CategoryId: CategoryId,
@@ -58,7 +61,7 @@ class ProductService {
 
   static async getAllproducts(req, res) {
     try {
-      const { page = 1, limit = 5, sort, search } = req.query;
+      const { page, limit = 5, sort, search } = req.query;
       // Tùy chỉnh truy vấn dựa trên các tham số được truyền vào từ client
       const options = {
         order: [],
@@ -69,7 +72,7 @@ class ProductService {
           {
             model: db.Category,
             attributes: ["name"],
-            through: { attributes: [] }, // Bỏ qua bảng trung gian
+            through: { attributes: [] },
           },
         ],
       };
@@ -112,6 +115,16 @@ class ProductService {
 
   static async updateProduct(id, data) {
     try {
+      const {
+        name,
+        price,
+        image,
+        quantity,
+        description,
+        CategoryIds,
+        AuthorId,
+        PublisherId,
+      } = data;
       const checkProduct = await db.Product.findByPk(id);
       if (!checkProduct) {
         return {
@@ -125,37 +138,51 @@ class ProductService {
 
       // Kiểm tra xem liệu có CategoryIds trong data không
       if ("CategoryIds" in data) {
-        const { CategoryIds } = data;
-        if (Array.isArray(CategoryIds)) {
-          // Xóa tất cả các bản ghi liên quan đến sản phẩm trong bảng trung gian Product_Category
-          await db.Product_Category.destroy({
-            where: {
-              ProductId: productId,
-            },
-          });
+        // Xóa tất cả các bản ghi liên quan đến sản phẩm trong bảng trung gian Product_Category
+        await db.Product_Category.destroy({
+          where: {
+            ProductId: productId,
+          },
+        });
 
-          // Thêm mới các bản ghi trong bảng trung gian Product_Category với các CategoryId mới
-          await Promise.all(
-            CategoryIds.map(async (CategoryId) => {
-              await db.Product_Category.create({
-                ProductId: productId,
-                CategoryId: CategoryId,
-              });
-            })
-          );
-        }
+        // Convert CategoryIds from string to array
+        let CategoryIdsNew = CategoryIds.replace(/[\[\]']+/g, "");
+        const categoryIdsArray = CategoryIdsNew.split(",");
+
+        // Thêm mới các bản ghi trong bảng trung gian Product_Category với các CategoryId mới
+        await Promise.all(
+          categoryIdsArray.map(async (CategoryId) => {
+            await db.Product_Category.create({
+              ProductId: productId,
+              CategoryId: CategoryId,
+            });
+          })
+        );
+
         // Xóa trường CategoryIds ra khỏi dữ liệu cập nhật sản phẩm
         delete data["CategoryIds"];
       }
 
       // Cập nhật thông tin sản phẩm với ID đã xác định
-      await db.Product.update(data, {
-        where: { id: id },
-      });
+      const data_update = await db.Product.update(
+        {
+          name,
+          image,
+          price,
+          quantity,
+          description,
+          AuthorId,
+          PublisherId,
+        },
+        {
+          where: { id: id },
+        }
+      );
 
       return {
         status: "OK",
         message: "Thành công",
+        data_update,
       };
     } catch (error) {
       console.error(error);

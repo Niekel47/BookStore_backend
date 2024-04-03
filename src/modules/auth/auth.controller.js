@@ -24,15 +24,27 @@ class AuthController {
     }
   };
 
-  static handleAuth = async (req, res) => {
+  static loginAdmin = async (req, res) => {
     try {
-      const authtoken = await AuthService.handleAuth(req.body);
-      return res.status(200).json(authtoken);
+      const loginadmin = await AuthService.loginAdmin(req.body);
+      return res.status(200).json(loginadmin);
     } catch (error) {
       console.error(error);
       throw error;
     }
   };
+
+  static async profileAdmin(req, res, next) {
+    try {
+      console.log(req.auth?.payload);
+      const { id } = req.auth?.payload || "";
+      console.log(req.auth);
+      const data = await AuthService.profileAdmin(id);
+      res.status(200).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async profile(req, res, next) {
     try {
@@ -88,6 +100,30 @@ class AuthController {
       return next(error);
     }
   }
+
+  static logout = (req, res) => {
+    try {
+      res.clearCookie("jwt");
+      return res.status(200).json({
+        success: true,
+        message: "Đăng xuất thành công !",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  static logoutAdmin = (req, res) => {
+    try {
+      res.clearCookie("jwt_admin");
+      return res.status(200).json({
+        success: true,
+        message: "Đăng xuất thành công !",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 }
 
 module.exports = AuthController;

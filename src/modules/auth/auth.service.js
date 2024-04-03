@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const {
   genneralAccessToken,
   genneralRefreshToken,
-  verifyToken,
 } = require("../../middleware/auth.middleware.js");
 const db = require("../../models/index");
 const { createJWT } = require("../../middleware/auth.middleware.js");
@@ -55,6 +54,12 @@ class AuthService {
           message: "user không tồn tại",
         };
       }
+      if (checkuser.RoleId === 1) {
+        return {
+          status: "ERR",
+          message: "Vui lòng chọn tài khoản khác",
+        };
+      }
       const comparePassword = bcrypt.compare(password, checkuser.password);
       if (!comparePassword) {
         return {
@@ -82,6 +87,70 @@ class AuthService {
       throw error;
     }
   };
+
+  static loginAdmin = async (adminlogin) => {
+    try {
+      const { email, password } = adminlogin;
+      const checkuser = await db.User.findOne({ where: { email: email } });
+
+      if (!checkuser) {
+        return {
+          status: "ERR",
+          message: "user không tồn tại",
+        };
+      }
+      if (checkuser.RoleId === 1) {
+        const comparePassword = bcrypt.compare(password, checkuser.password);
+        if (!comparePassword) {
+          return {
+            status: "ERR",
+            message: "Mật khẩu hoặc tài khoản không đúng",
+          };
+        }
+        const access_token = await genneralAccessToken({
+          id: checkuser.id,
+          email: checkuser.email,
+        });
+        const refresh_token = await genneralRefreshToken({
+          id: checkuser.id,
+          email: checkuser.email,
+        });
+
+        return {
+          status: "OK",
+          message: "Xin chào ADMIN",
+          access_token,
+          refresh_token,
+        };
+      } else {
+        return {
+          status: "Err",
+          message: "Bạn không có quyền truy cập",
+        };
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  static async profileAdmin(id) {
+    try {
+      // Tìm người dùng trong cơ sở dữ liệu với id được cung cấp
+      console.log(id);
+      const user = await db.User.findByPk(id);
+      if (!user) {
+        return {
+          status: 500,
+          message: "Nguoi dung khong ton tai",
+        };
+      }
+      return user;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
   static async profile(id) {
     try {

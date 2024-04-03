@@ -1,33 +1,34 @@
-const Category = require("../../models/category.js");
 const db = require("../../models/index");
 
-class CategoryService {
-  static createCategory = async (newcategory) => {
+class OrderService {
+  static addOrder = async (newOrder) => {
     try {
-      const { name } = newcategory;
-      console.log("data", newcategory);
-      const check_cat = await db.Category.findOne({ where: { name: name } });
-      if (check_cat) {
+      const { payment, status, name, address, phone, total, UserId } = newOrder;
+      const checkOrder = await db.Order.findOne({ where: { name } });
+      if (checkOrder) {
         return {
-          status: "Err",
-          message: "Category đã tồn tại!",
+          status: "err",
+          message: "Đơn hàng đã tồn tại",
         };
       }
-      const create_category = await db.Category.create({
-        name: name,
+
+      const NewOrder = db.Order.create({
+        payment,
+        status,
+        name,
+        address,
+        phone,
+        total,
+        UserId,
       });
-      return {
-        status: 200,
-        message: "Thanh cong",
-        data: create_category,
-      };
+
+      return NewOrder;
     } catch (error) {
-      console.error(error);
-      throw error;
+      console.log(error);
     }
   };
 
-  static async getAllCategory(req, res) {
+  static async getAllOrder(req, res) {
     try {
       const { page, limit = 5, sort, search } = req.query;
       // Tùy chỉnh truy vấn dựa trên các tham số được truyền vào từ client
@@ -57,14 +58,14 @@ class CategoryService {
           ],
         };
       }
-      const totalCat = await db.Category.count(options.where);
-      const totalPagesCat = Math.ceil(totalCat / limit);
+      const totalOrder = await db.Order.count(options.where);
+      const totalPagesOrder = Math.ceil(totalOrder / limit);
       // Thực hiện truy vấn để lấy danh sách người dùng với các tùy chọn đã được đặt
-      const getallcat = await db.Category.findAll(options);
+      const getallOrder = await db.Order.findAll(options);
       return {
-        totalCat,
-        totalPagesCat,
-        getallcat,
+        totalOrder,
+        totalPagesOrder,
+        getallOrder,
       };
     } catch (error) {
       console.log(error);
@@ -72,17 +73,17 @@ class CategoryService {
     }
   }
 
-  static async updateCategory(id, req, res) {
+  static async updateOrder(id, req, res) {
     try {
       const { name } = req.body;
-      const existingCat = await db.Category.findByPk(id);
+      const existingCat = await db.Order.findByPk(id);
       if (!existingCat) {
         return res.status(404).json({
-          error: "Category không tồn tại.",
+          error: "Order không tồn tại.",
         });
       }
 
-      const updateCat = await db.Category.update(
+      const updateCat = await db.Order.update(
         {
           name,
         },
@@ -96,15 +97,15 @@ class CategoryService {
     }
   }
 
-  static async deleteCategory(id, req, res) {
+  static async deleteOrder(id, req, res) {
     try {
-      const existingCat = await db.Category.findByPk(id);
+      const existingCat = await db.Order.findByPk(id);
       if (!existingCat) {
         return res.status(404).json({
-          error: "Category không tồn tại.",
+          error: "Order không tồn tại.",
         });
       }
-      const destroy = await db.Category.destroy({ where: { id } });
+      const destroy = await db.Order.destroy({ where: { id } });
       return destroy;
     } catch (error) {
       console.log(error);
@@ -112,9 +113,9 @@ class CategoryService {
     }
   }
 
-  static async deleteManyCategorys(ids) {
+  static async deleteManyOrders(ids) {
     try {
-      const destroy = await db.Category.destroy({ where: { id: ids } });
+      const destroy = await db.Order.destroy({ where: { id: ids } });
       return destroy;
     } catch (error) {
       console.log(error);
@@ -123,4 +124,4 @@ class CategoryService {
   }
 }
 
-module.exports = CategoryService;
+module.exports = OrderService;

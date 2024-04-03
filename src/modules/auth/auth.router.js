@@ -17,10 +17,16 @@ router.post(
   AuthController.loginUser
 );
 router.post(
+  "/loginAdmin",
+  validationHandler(AuthLoginInput),
+  AuthController.loginAdmin
+);
+router.post(
   "/register",
   validationHandler(AuthRegisterInput),
   AuthController.createUser
 );
+router.get("/profileAdmin", AuthController.profileAdmin);
 router.get("/profile", AuthController.profile);
 router.put("/profile", AuthController.updateprofile);
 router.post(
@@ -28,6 +34,7 @@ router.post(
   validationHandler(AuthChangePassInput),
   AuthController.updatePassword
 );
-router.get("/authentication", AuthController.handleAuth);
+router.get("/logout", AuthController.logout);
+router.get("/logoutAdmin", AuthController.logoutAdmin);
 
 module.exports = router;

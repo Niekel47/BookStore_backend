@@ -17,7 +17,7 @@ class PublisherService {
       return {
         status: 200,
         message: "Thanh cong",
-        data: { post },
+        data: post ,
       };
     } catch (error) {
       console.error(error);
@@ -27,7 +27,7 @@ class PublisherService {
 
   static async getAllPublisher(req, res) {
     try {
-      const { page, limit = 3, sort, search } = req.query;
+      const { page, limit = 5, sort, search } = req.query;
       // Tùy chỉnh truy vấn dựa trên các tham số được truyền vào từ client
       const options = {
         order: [],
@@ -56,12 +56,12 @@ class PublisherService {
         };
       }
       const totalCat = await db.Publisher.count(options.where);
-      const totalPages = Math.ceil(totalCat / limit);
+      const totalPagesPublihser = Math.ceil(totalCat / limit);
       // Thực hiện truy vấn để lấy danh sách người dùng với các tùy chọn đã được đặt
       const getPublisher = await db.Publisher.findAll(options);
       return {
         totalCat,
-        totalPages,
+        totalPagesPublihser,
         getPublisher,
       };
     } catch (error) {

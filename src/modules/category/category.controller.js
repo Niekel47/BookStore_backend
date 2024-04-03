@@ -4,7 +4,10 @@ const CategoryService = require("./category.service.js");
   static createCategory = async (req, res) => {
     try {
       const { name } = req.body;
-      const create_category = await CategoryService.createCategory(req.body);
+      
+      const create_category = await CategoryService.createCategory({
+        name:name
+      });
       return res.status(200).json(create_category);
     } catch (error) {
       console.error(error);
