@@ -1,5 +1,6 @@
 const Category = require("../../models/category.js");
 const db = require("../../models/index");
+const { Op } = require("sequelize");
 
 class CategoryService {
   static createCategory = async (newcategory) => {
@@ -52,8 +53,8 @@ class CategoryService {
       if (search) {
         options.where = {
           [Op.or]: [
-            { fullname: { [Op.like]: `%${search}%` } },
-            { email: { [Op.like]: `%${search}%` } },
+            // { id: { [Op.like]: `%${search}%` } },
+            { name: { [Op.like]: `%${search}%` } },
           ],
         };
       }

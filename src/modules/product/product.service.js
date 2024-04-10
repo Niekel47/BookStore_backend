@@ -1,4 +1,5 @@
 const db = require("../../models/index");
+const { Op } = require("sequelize");
 
 class ProductService {
   static async createproduct(productData) {
@@ -61,18 +62,41 @@ class ProductService {
 
   static async getAllproducts(req, res) {
     try {
-      const { page, limit = 5, sort, search } = req.query;
+      const {
+        page,
+        limit = 5,
+        sort,
+        search,
+        categoryIds,
+        authorIds,
+        publisherIds,
+      } = req.query;
       // Tùy chỉnh truy vấn dựa trên các tham số được truyền vào từ client
       const options = {
         order: [],
         where: {},
         include: [
-          { model: db.Author, attributes: ["name"] },
-          { model: db.Publisher, attributes: ["name"] },
+          {
+            model: db.Author,
+            attributes: ["name"],
+            where: authorIds
+              ? { id: { [Op.in]: authorIds.split(",") } }
+              : undefined,
+          },
+          {
+            model: db.Publisher,
+            attributes: ["name"],
+            where: publisherIds
+              ? { id: { [Op.in]: publisherIds.split(",") } }
+              : undefined,
+          },
           {
             model: db.Category,
             attributes: ["name"],
             through: { attributes: [] },
+            where: categoryIds
+              ? { id: { [Op.in]: categoryIds.split(",") } }
+              : undefined,
           },
         ],
       };
@@ -92,12 +116,10 @@ class ProductService {
       // Xử lý phần tìm kiếm
       if (search) {
         options.where = {
-          [Op.or]: [
-            { fullname: { [Op.like]: `%${search}%` } },
-            { email: { [Op.like]: `%${search}%` } },
-          ],
+          [Op.or]: [{ name: { [Op.like]: `%${search}%` } }],
         };
       }
+
       const totalProducts = await db.Product.count(options.where);
       const totalPages = Math.ceil(totalProducts / limit);
       // Thực hiện truy vấn để lấy danh sách người dùng với các tùy chọn đã được đặt

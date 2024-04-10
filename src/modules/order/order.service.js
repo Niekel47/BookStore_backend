@@ -73,9 +73,9 @@ class OrderService {
     }
   }
 
-  static async updateOrder(id, req, res) {
+  static async updateOrder(id, data) {
     try {
-      const { name } = req.body;
+      const { name, status } = data;
       const existingCat = await db.Order.findByPk(id);
       if (!existingCat) {
         return res.status(404).json({
@@ -86,6 +86,7 @@ class OrderService {
       const updateCat = await db.Order.update(
         {
           name,
+          status,
         },
         { where: { id } }
       );
@@ -122,6 +123,60 @@ class OrderService {
       throw error;
     }
   }
+
+  static orderOff = async (cart, userOrder) => {
+    try {
+      let total = 0;
+      for (let i = 0; i < cart.length; i++) {
+        total += cart[i].price * cart[i].cartQuantity;
+      }
+      let orderInsert = await db.Order.create({
+        payment: "Thanh toán khi nhận hàng",
+        status: 0,
+        name: userOrder.name,
+        address: userOrder.address,
+        phone: userOrder.phone,
+        total: total,
+        UserId: userOrder.user_id,
+      });
+      for (let i = 0; i < cart.length; i++) {
+        await db.OrderProduct.create({
+          ProductId: cart[i].id,
+          OrderId: orderInsert.id,
+          quantity: cart[i].cartQuantity,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  static orderOnl = async (cart, userOrder) => {
+    try {
+      let total = 0;
+      for (let i = 0; i < cart.length; i++) {
+        total += cart[i].price * cart[i].cartQuantity;
+      }
+      let orderInsert = await db.Order.create({
+        payment: "Thanh toán PayPal",
+        status: 0,
+        name: userOrder.name,
+        address: userOrder.address,
+        phone: userOrder.phone,
+        total: total,
+        UserId: userOrder.user_id,
+      });
+      for (let i = 0; i < cart.length; i++) {
+        await db.OrderProduct.create({
+          ProductId: cart[i].id,
+          OrderId: orderInsert.id,
+          quantity: cart[i].cartQuantity,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 }
 
 module.exports = OrderService;

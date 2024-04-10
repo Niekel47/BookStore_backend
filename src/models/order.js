@@ -10,12 +10,19 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Order.belongsTo(models.User);
-      Order.belongsToMany(models.Product, { through: "Order_Product" });
+      Order.belongsToMany(models.Product, { through: "OrderProduct" });
       Order.hasMany(models.Rate, { foreignKey: "OrderId" });
+      Order.hasMany(models.OrderProduct, { foreignKey: "OrderId" });
     }
   }
   Order.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+        primaryKey: true,
+      },
       payment: DataTypes.STRING,
       status: DataTypes.INTEGER,
       name: DataTypes.STRING,

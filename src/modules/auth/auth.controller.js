@@ -48,9 +48,7 @@ class AuthController {
 
   static async profile(req, res, next) {
     try {
-      console.log(req.auth?.payload);
       const { id } = req.auth?.payload || "";
-      console.log(req.auth);
       const data = await AuthService.profile(id);
       res.status(200).json(data);
     } catch (error) {

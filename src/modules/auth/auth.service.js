@@ -155,7 +155,6 @@ class AuthService {
   static async profile(id) {
     try {
       // Tìm người dùng trong cơ sở dữ liệu với id được cung cấp
-      console.log(id);
       const user = await db.User.findByPk(id);
       if (!user) {
         return {

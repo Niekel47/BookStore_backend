@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
         through: "Product_Category",
       });
       Product.hasMany(models.Rate);
-      Product.belongsToMany(models.Order, { through: "Order_Product" });
+      Product.belongsToMany(models.Order, { through: "OrderProduct" });
+      Product.hasMany(models.OrderProduct, { foreignKey: "ProductId" });
       // Product.belongsTo(models.Product_Category, {
       //   foreignKey: "ProductId",
       // });
@@ -35,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       AuthorId: DataTypes.UUID,
       PublisherId: DataTypes.UUID,
+      AuthorId: DataTypes.UUID,
       name: DataTypes.TEXT,
       image: DataTypes.TEXT,
       price: DataTypes.FLOAT,
