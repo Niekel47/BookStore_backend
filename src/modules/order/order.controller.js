@@ -351,6 +351,97 @@ class OrderController {
       console.log(error);
     }
   };
+
+  static getOrderDetail = async (req, res) => {
+    try {
+      let order_id = req.params.order_id;
+      let data = await db.Order.findOne({
+        include: [
+          {
+            model: db.OrderProduct,
+            attributes: ["id", "OrderId", "ProductId", "quantity"],
+            include: [
+              {
+                model: db.Product,
+                attributes: ["name", "image", "price"],
+                required: true,
+              },
+            ],
+          },
+        ],
+        where: {
+          id: order_id,
+        },
+      });
+      return res.status(200).json({
+        success: true,
+        order: data,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  static orderIndex = async (req, res) => {
+    try {
+      let limit = 5;
+      let page = req.query.page;
+      if (!page) {
+        page = 1;
+      }
+      const { count, rows: orders } = await db.Order.findAndCountAll({
+        limit: limit,
+        offset: (page - 1) * limit,
+      });
+      const totalPage = Math.ceil(count / limit);
+      const result = {
+        success: true,
+        total_product: count,
+        total_page: totalPage,
+        current_page: page,
+        orders: orders,
+      };
+      return res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  static OrderDashBoard = async (req, res) => {
+    try {
+      const countUser = await db.User.count();
+      const countProduct = await db.Product.count();
+      const countOrder = await db.Order.count();
+      const countOrderShip = await db.Order.count({
+        where: {
+          status: 1,
+        },
+      });
+      let limit = 8;
+      let page = req.query.page;
+      if (!page) {
+        page = 1;
+      }
+      const { count, rows: orders } = await db.Order.findAndCountAll({
+        limit: limit,
+        offset: (page - 1) * limit,
+      });
+      const totalPage = Math.ceil(count / limit);
+      return res.status(200).json({
+        success: true,
+        count_user: countUser,
+        count_product: countProduct,
+        count_order: countOrder,
+        count_order_ship: countOrderShip,
+        total_product: count,
+        total_page: totalPage,
+        current_page: page,
+        orders: orders,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 }
 
 module.exports = OrderController;

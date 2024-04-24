@@ -67,7 +67,8 @@ class ProductController {
         });
       }
 
-      const imagePath = "/images/" + image;
+      const imagePath = req.file.path;
+      console.log("imagePath", imagePath);
 
       const newProduct = await ProductService.createproduct({
         name,
@@ -122,7 +123,7 @@ class ProductController {
         });
       }
       console.log("image", image);
-      const imagePath = "/images/" + image;
+      const imagePath = req.file.path;
       const response = await ProductService.updateProduct(id, {
         name,
         price,

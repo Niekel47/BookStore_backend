@@ -36,9 +36,7 @@ class AuthController {
 
   static async profileAdmin(req, res, next) {
     try {
-      console.log(req.auth?.payload);
       const { id } = req.auth?.payload || "";
-      console.log(req.auth);
       const data = await AuthService.profileAdmin(id);
       res.status(200).json(data);
     } catch (error) {

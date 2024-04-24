@@ -14,7 +14,6 @@ class ProductService {
         AuthorId,
         PublisherId,
       } = productData;
-      console.log("Category", productData);
       // Kiểm tra xem sản phẩm đã tồn tại chưa
       const checkProduct = await db.Product.findOne({
         where: { name: name },
@@ -64,7 +63,7 @@ class ProductService {
     try {
       const {
         page,
-        limit = 5,
+        limit = 7,
         sort,
         search,
         categoryIds,

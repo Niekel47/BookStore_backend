@@ -5,6 +5,12 @@ const OrderController = require("./order.controller.js");
 
 router.post("/", OrderController.addOrder);
 router.get("/", OrderController.getAllOrder);
+router.get(
+  "/dashboard",
+
+  OrderController.OrderDashBoard
+);
+// router.get("/", OrderController.orderIndex);
 router.put("/:id", OrderController.updateOrder);
 router.delete("/:id", OrderController.deleteOrder);
 router.post("/delete-many", OrderController.deleteManyOrder);
@@ -37,5 +43,19 @@ router.put(
   "/order_confirm_action/:order_id",
   OrderController.handleUpdateConfirm
 );
+
+router.get(
+  "/:order_id",
+
+  OrderController.getOrderDetail
+);
+
+router.put(
+  "/confirm/:order_id",
+
+  OrderController.confirmOrder
+);
+
+
 
 module.exports = router;
