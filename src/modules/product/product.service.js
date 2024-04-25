@@ -63,7 +63,7 @@ class ProductService {
     try {
       const {
         page,
-        limit = 7,
+        limit = 5,
         sort,
         search,
         categoryIds,
