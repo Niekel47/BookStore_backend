@@ -17,7 +17,7 @@ class PublisherService {
       return {
         status: 200,
         message: "Thanh cong",
-        data: post ,
+        data: post,
       };
     } catch (error) {
       console.error(error);

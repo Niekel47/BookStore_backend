@@ -1,5 +1,6 @@
 const ProductService = require("./product.service.js");
 const fs = require("fs");
+const db = require("../../models/index");
 
 class ProductController {
   static async createProduct(req, res) {
@@ -189,6 +190,42 @@ class ProductController {
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
+
+  static getProductSearch = async (req, res) => {
+    try {
+      let limit = 8;
+      let page = req.query.page;
+      if (!page) {
+        page = 1;
+      }
+      let product_name = req.query.name;
+      if (!product_name) {
+        return res.status(400).json({
+          detail: "Vui lòng nhập tên sản phẩm",
+        });
+      }
+      const { count, rows: products } = await db.Product.findAndCountAll({
+        limit: limit,
+        offset: (page - 1) * limit,
+        where: {
+          name: {
+            [db.Sequelize.Op.like]: `%${product_name}%`,
+          },
+        },
+      });
+      const totalPage = Math.ceil(count / limit);
+      const result = {
+        success: true,
+        total_product: count,
+        total_page: totalPage,
+        current_page: page,
+        products: products,
+      };
+      return res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 }
 
 module.exports = ProductController;

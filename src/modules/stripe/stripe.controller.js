@@ -72,10 +72,11 @@ const createCheckout = async (req, res) => {
         product_data: {
           name: product.name,
           images: [product.image],
+          description: product.description,
         },
         unit_amount: product.price,
       },
-      description: product.description,
+
       quantity: product.cartQuantity,
     }));
 
