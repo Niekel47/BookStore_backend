@@ -157,6 +157,7 @@ class OrderService {
       for (let i = 0; i < cart.length; i++) {
         total += cart[i].price * cart[i].cartQuantity;
       }
+      console.log("userOrder", userOrder);
       let orderInsert = await db.Order.create({
         payment: "Thanh toán PayPal",
         status: 0,
@@ -165,6 +166,7 @@ class OrderService {
         phone: userOrder.phone,
         total: total,
         UserId: userOrder.user_id,
+        transactionId: userOrder.transactionId,
       });
       for (let i = 0; i < cart.length; i++) {
         await db.OrderProduct.create({
@@ -177,8 +179,6 @@ class OrderService {
       console.log(error);
     }
   };
-
-  
 }
 
 module.exports = OrderService;

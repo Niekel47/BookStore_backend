@@ -30,6 +30,8 @@ module.exports = (sequelize, DataTypes) => {
       phone: DataTypes.STRING,
       total: DataTypes.FLOAT,
       UserId: DataTypes.UUID,
+      transactionId: DataTypes.STRING, // trường này lưu transaction_id từ PayPal
+      sessionId: DataTypes.STRING,
     },
     {
       sequelize,

@@ -29,6 +29,14 @@ module.exports = {
       UserId: {
         type: Sequelize.UUID,
       },
+      transactionId: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      sessionId: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
