@@ -62,10 +62,24 @@ class OrderService {
       const totalPagesOrder = Math.ceil(totalOrder / limit);
       // Thực hiện truy vấn để lấy danh sách người dùng với các tùy chọn đã được đặt
       const getallOrder = await db.Order.findAll(options);
+       let totalPaymentData = 0;
+       let totalTotalData = 0;
+       let paymentCounts = {
+         "Thanh toán khi nhận hàng": 0,
+         "Thanh toán PayPal": 0,
+         // Thêm các phương thức thanh toán khác tại đây
+       };
+       for (let order of getallOrder) {
+          paymentCounts[order.payment]++;
+         totalTotalData += order.total;
+       }
+
       return {
         totalOrder,
         totalPagesOrder,
         getallOrder,
+        totalPaymentData,
+        totalTotalData,
       };
     } catch (error) {
       console.log(error);

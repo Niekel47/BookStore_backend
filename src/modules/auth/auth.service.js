@@ -60,11 +60,11 @@ class AuthService {
           message: "Vui lòng chọn tài khoản khác",
         };
       }
-      const comparePassword = bcrypt.compare(password, checkuser.password);
+      const comparePassword = await bcrypt.compare(password, checkuser.password);
       if (!comparePassword) {
         return {
           status: "ERR",
-          message: "Mật khẩu hoặc tài khoản không đúng",
+          message: "Mật khẩu không đúng! Vui lòng nhập lại mật khẩu",
         };
       }
       const access_token = await genneralAccessToken({
@@ -100,11 +100,11 @@ class AuthService {
         };
       }
       if (checkuser.RoleId === 1) {
-        const comparePassword = bcrypt.compare(password, checkuser.password);
+        const comparePassword = await bcrypt.compare(password, checkuser.password);
         if (!comparePassword) {
           return {
             status: "ERR",
-            message: "Mật khẩu hoặc tài khoản không đúng",
+            message: "Mật khẩu không đúng! Vui lòng nhập lại mật khẩu",
           };
         }
         const access_token = await genneralAccessToken({
